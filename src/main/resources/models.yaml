@@ -1,0 +1,91 @@
+openapi: "3.0.1"
+info:
+  title: "Demo models"
+  version: "1.0"
+servers:
+- url: "/api/v1"
+paths: {}
+components:
+  schemas:
+    ComplexObject:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        probability:
+          type: "number"
+          format: "double"
+        assets:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AssetKey"
+        dates:
+          type: "array"
+          items:
+            type: "string"
+            format: "date"
+        asset:
+          $ref: "#/components/schemas/AssetKey"
+    AssetKey:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        keyType:
+          type: "string"
+      discriminator:
+        propertyName: "keyType"
+        mapping:
+          Asset1: "Asset1"
+          Asset2: "Asset2"
+          Asset3: "Asset3"
+    Asset1:
+      allOf:
+        - $ref: "#/components/schemas/AssetKey"
+        - required:
+            - "currencyCode"
+            - "modifiedDuration"
+          type: "object"
+          properties:
+            currencyCode:
+              $ref: "#/components/schemas/CurrencyCode"
+            modifiedDuration:
+              type: "number"
+              format: "double"
+          example:
+            currencyCode: "CHF"
+            modifiedDuration: 5
+    Asset2:
+      allOf:
+        - $ref: "#/components/schemas/AssetKey"
+        - required:
+            - "currencyCode"
+          type: "object"
+          properties:
+            currencyCode:
+              $ref: "#/components/schemas/CurrencyCode"
+    Asset3:
+      allOf:
+        - $ref: "#/components/schemas/AssetKey"
+        - required:
+            - "symbol"
+            - "symbolType"
+          type: "object"
+          properties:
+            symbolType:
+              type: "string"
+              enum:
+                - "SYMBOL1"
+                - "SYMBOL2"
+                - "SYMBOL3"
+                - "SYMBOL4"
+                - "SYMBOL5"
+            symbol:
+              type: "string"
+          example:
+            symbolType: "SYMBOL1"
+            symbol: 1234567
+    CurrencyCode:
+      type: "string"
+      description: "ISO 4217"
+      example: "CHF"
